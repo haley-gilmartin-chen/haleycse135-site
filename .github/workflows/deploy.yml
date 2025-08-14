@@ -10,10 +10,15 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Setup SSH
+        shell: bash
         run: |
+          set -euo pipefail
           mkdir -p ~/.ssh
-          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          echo "${{ secrets.DEPLOY_SSH_KEY_B64 }}" | base64 -d > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
+          # quick sanity check that the key parses
+          ssh-keygen -y -f ~/.ssh/id_ed25519 > /dev/null
+          # trust the host key so we don’t get prompted
           ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy main site
