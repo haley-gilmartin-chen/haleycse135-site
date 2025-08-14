@@ -1,0 +1,41 @@
+name: Deploy to Droplet
+on:
+  push:
+    branches: [ main ]   # change if your default branch is not 'main'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy main site
+        run: |
+          rsync -az --delete -e "ssh" \
+            haleycse135.site/public_html/ \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/var/www/haleycse135.site/public_html/
+
+      - name: Deploy collector
+        run: |
+          rsync -az --delete -e "ssh" \
+            collector.haleycse135.site/public_html/ \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/var/www/collector.haleycse135.site/public_html/
+
+      - name: Deploy reporting
+        run: |
+          rsync -az --delete -e "ssh" \
+            reporting.haleycse135.site/public_html/ \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/var/www/reporting.haleycse135.site/public_html/
+
+      - name: Smoke test
+        run: |
+          curl -f https://haleycse135.site/ > /dev/null
+          curl -f https://collector.haleycse135.site/ > /dev/null
+          curl -f https://reporting.haleycse135.site/ > /dev/null
