@@ -1,56 +1,44 @@
-#!/usr/bin/env python3
-import cgi
-import cgitb
+#!/usr/bin/python3
 import os
-from http import cookies
 import sys
-import json
-from urllib.parse import parse_qs
+import http.cookies
+from urllib.parse import parse_qs, unquote_plus
 
-cgitb.enable()
-
-def load_session():
-    cookie = cookies.SimpleCookie()
-    if 'HTTP_COOKIE' in os.environ:
-        cookie.load(os.environ['HTTP_COOKIE'])
-    if 'session' in cookie:
-        try:
-            with open(f"/tmp/{cookie['session'].value}.json", 'r') as f:
-                return json.load(f)
-        except:
-            pass
-    return {}
-
-def save_session(session_data):
-    cookie = cookies.SimpleCookie()
-    if 'HTTP_COOKIE' in os.environ:
-        cookie.load(os.environ['HTTP_COOKIE'])
-    if 'session' not in cookie:
-        import uuid
-        session_id = str(uuid.uuid4())
-        cookie['session'] = session_id
-    with open(f"/tmp/{cookie['session'].value}.json", 'w') as f:
-        json.dump(session_data, f)
-    return cookie
+# Print headers first
+print("Cache-Control: no-cache")
 
 # Get form data
-form = cgi.FieldStorage()
-session_data = load_session()
+username = None
+if os.environ.get('REQUEST_METHOD') == 'POST':
+    # Read POST data
+    content_length = int(os.environ.get('CONTENT_LENGTH', 0))
+    post_data = sys.stdin.read(content_length)
+    
+    # Parse form data
+    form_data = parse_qs(post_data)
+    if 'username' in form_data:
+        # Clean up the username value
+        username = unquote_plus(form_data['username'][0].strip())
 
-# Update session if username is provided
-if 'username' in form:
-    session_data['username'] = form.getvalue('username')
+# Create or get cookie
+cookie = http.cookies.SimpleCookie()
 
-# Save session and get cookie
-cookie = save_session(session_data)
+if username:
+    # Set the cookie if username was submitted
+    cookie['username'] = username
+    cookie['username']['path'] = '/'  # Make cookie available for all paths
+    print(cookie.output())
+elif 'HTTP_COOKIE' in os.environ:
+    # Try to load existing cookie
+    cookie.load(os.environ['HTTP_COOKIE'])
+    if 'username' in cookie:
+        username = cookie['username'].value
 
-print("Content-Type: text/html")
-print(cookie.output())
-print()
+# Print content type header
+print("Content-type: text/html\n")
 
-name = session_data.get('username', '')
-
-print("""
+# Print HTML
+print("""<!DOCTYPE html>
 <html>
 <head>
     <title>Python Sessions</title>
@@ -58,14 +46,13 @@ print("""
 <body>
     <h1>Python Sessions Page 1</h1>""")
 
-if name:
-    print(f"<p><b>Name:</b> {name}</p>")
+if username:
+    print(f"    <p><b>Name:</b> {username}</p>")
 else:
-    print("<p><b>Name:</b> You do not have a name set</p>")
+    print("    <p><b>Name:</b> You do not have a name set</p>")
 
-print("""
-    <br/><br/>
-    <a href="/cgi-bin/py-state-demo-2.py">Session Page 2</a><br/>
+print("""    <br/><br/>
+    <a href="/cgi-bin/py-sessions-2.py">Session Page 2</a><br />
     <a href="/python-cgiform.html">Python CGI Form</a><br />
     <form style="margin-top:30px" action="/cgi-bin/py-destroy-session.py" method="get">
         <button type="submit">Destroy Session</button>

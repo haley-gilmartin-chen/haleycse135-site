@@ -1,33 +1,18 @@
-#!/usr/bin/env node
-const http = require('http');
-const session = require('express-session');
-const express = require('express');
+#!/usr/bin/node
 
-const app = express();
+process.stdout.write("Cache-Control: no-cache\n");
+process.stdout.write("Set-Cookie: username=; expires=Thu, 01 Jan 1970 00:00:00 GMT\n");
+process.stdout.write("Content-type: text/html\n\n");
 
-app.use(session({
-    name: 'CGISESSID',
-    secret: 'your-secret-key',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false }
-}));
-
-app.get('/', (req, res) => {
-    req.session.destroy();
-    
-    res.writeHead(200, { 'Content-Type': 'text/html' });
-    res.write('<html>');
-    res.write('<head><title>Node.js Session Destroyed</title></head>');
-    res.write('<body>');
-    res.write('<h1>Session Destroyed</h1>');
-    res.write('<a href="/nodejs-cgiform.html">Back to the Node.js CGI Form</a><br />');
-    res.write('<a href="/cgi-bin/node-sessions-1.js">Back to Page 1</a><br />');
-    res.write('<a href="/cgi-bin/node-sessions-2.js">Back to Page 2</a>');
-    res.write('<a href="/">Back to home</a>');
-    res.write('</body></html>');
-    res.end();
-});
-
-const server = http.createServer(app);
-server.listen(0);
+process.stdout.write(`
+    <html>
+    <head><title>NodeJS Session Destroyed</title></head>
+    <body>
+    <h1>NodeJS Session Destroyed</h1>
+    <a href="/cgi-bin/node-sessions-1.js">Back to Session Page 1</a><br />
+    <a href="/cgi-bin/node-sessions-2.js">Back to Session Page 2</a><br />
+    <a href="/nodejs-cgiform.html">Back to Form</a><br />
+    <a href="/">Back to Home</a>
+    </body>
+    </html>
+`);

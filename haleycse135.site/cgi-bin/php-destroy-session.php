@@ -1,25 +1,19 @@
+#!/usr/bin/php-cgi
 <?php
-session_name('CGISESSID');
 session_start();
-
-$_SESSION = [];
-if (ini_get('session.use_cookies')) {
-    $params = session_get_cookie_params();
-    setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
-}
 session_destroy();
-
-header('Cache-Control: no-cache');
-header('Content-Type: text/html');
+header("Cache-Control: no-cache");
 ?>
 <!DOCTYPE html>
 <html>
-<head><title>PHP Session Destroyed</title></head>
+<head>
+    <title>PHP Session Destroyed</title>
+</head>
 <body>
-  <h1>Session Destroyed</h1>
-  <a href="/php-cgiform.html">Back to the PHP CGI Form</a><br />
-  <a href="/cgi-bin/php-sessions-1.php">Back to Page 1</a><br />
-  <a href="/cgi-bin/php-sessions-2.php">Back to Page 2</a>
-  <a href="/">Back to home</a>
+    <h1>PHP Session Destroyed</h1>
+    <a href="/cgi-bin/php-sessions-1.php">Back to Session Page 1</a><br />
+    <a href="/cgi-bin/php-sessions-2.php">Back to Session Page 2</a><br />
+    <a href="/php-cgiform.html">Back to Form</a><br />
+    <a href="/">Back to Home</a>
 </body>
 </html>

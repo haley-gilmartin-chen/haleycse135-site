@@ -1,33 +1,23 @@
-#!/usr/bin/env python3
-import cgi
-import cgitb
+#!/usr/bin/python3
 import os
-from http import cookies
-import sys
-import json
+import http.cookies
 
-cgitb.enable()
+# Print headers first
+print("Cache-Control: no-cache")
 
-def load_session():
-    cookie = cookies.SimpleCookie()
-    if 'HTTP_COOKIE' in os.environ:
-        cookie.load(os.environ['HTTP_COOKIE'])
-    if 'session' in cookie:
-        try:
-            with open(f"/tmp/{cookie['session'].value}.json", 'r') as f:
-                return json.load(f)
-        except:
-            pass
-    return {}
+# Get username from cookie if it exists
+username = None
+if 'HTTP_COOKIE' in os.environ:
+    cookie = http.cookies.SimpleCookie()
+    cookie.load(os.environ['HTTP_COOKIE'])
+    if 'username' in cookie:
+        username = cookie['username'].value
 
-# Get session data
-session_data = load_session()
-name = session_data.get('username', '')
+# Print content type header
+print("Content-type: text/html\n")
 
-print("Content-Type: text/html")
-print()
-
-print("""
+# Print HTML
+print("""<!DOCTYPE html>
 <html>
 <head>
     <title>Python Sessions</title>
@@ -35,14 +25,13 @@ print("""
 <body>
     <h1>Python Sessions Page 2</h1>""")
 
-if name:
-    print(f"<p><b>Name:</b> {name}</p>")
+if username:
+    print(f"    <p><b>Name:</b> {username}</p>")
 else:
-    print("<p><b>Name:</b> You do not have a name set</p>")
+    print("    <p><b>Name:</b> You do not have a name set</p>")
 
-print("""
-    <br/><br/>
-    <a href="/cgi-bin/py-state-demo-1.py">Session Page 1</a><br/>
+print("""    <br/><br/>
+    <a href="/cgi-bin/py-sessions-1.py">Session Page 1</a><br />
     <a href="/python-cgiform.html">Python CGI Form</a><br />
     <form style="margin-top:30px" action="/cgi-bin/py-destroy-session.py" method="get">
         <button type="submit">Destroy Session</button>
