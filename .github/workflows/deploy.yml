@@ -26,6 +26,26 @@ jobs:
           rsync -az --delete -e "ssh" \
             haleycse135.site/public_html/ \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/var/www/haleycse135.site/public_html/
+          rsync -az --delete -e "ssh" \
+            haleycse135.site/cgi-bin/ \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/var/www/haleycse135.site/cgi-bin/
+          ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+            'set -euo pipefail; \
+             sudo chown -R www-data:www-data /var/www/haleycse135.site/cgi-bin || true; \
+             sudo chmod -R 755 /var/www/haleycse135.site/cgi-bin; \
+             mkdir -p /var/www/haleycse135.site/src-build; \
+             cd /var/www/haleycse135.site/src-build; \
+             rm -f c-hello-html-world.cgi c-hello-json-world.cgi c-env.cgi c-get-echo.cgi c-post-echo.cgi c-general-request-echo.cgi c-sessions-1.cgi c-sessions-2.cgi c-destroy-session.cgi; \
+             gcc -O2 -o c-hello-html-world.cgi ../public_html/src/c-hello-html-world.c; \
+             gcc -O2 -o c-hello-json-world.cgi ../public_html/src/c-hello-json-world.c; \
+             gcc -O2 -o c-env.cgi ../public_html/src/c-env.c; \
+             gcc -O2 -o c-get-echo.cgi ../public_html/src/c-get-echo.c; \
+             gcc -O2 -o c-post-echo.cgi ../public_html/src/c-post-echo.c; \
+             gcc -O2 -o c-general-request-echo.cgi ../public_html/src/c-general-request-echo.c; \
+             mv -f *.cgi /var/www/haleycse135.site/cgi-bin/; \
+             sudo chown -R www-data:www-data /var/www/haleycse135.site/cgi-bin; \
+             sudo chmod -R 755 /var/www/haleycse135.site/cgi-bin; \
+             perl -v >/dev/null 2>&1 || true'
 
       - name: Deploy collector
         run: |
