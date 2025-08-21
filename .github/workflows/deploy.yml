@@ -31,6 +31,11 @@ jobs:
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/var/www/haleycse135.site/cgi-bin/
           ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
             'set -euo pipefail; \
+             # Ensure Node and php-cgi available \
+             if command -v apt-get >/dev/null 2>&1; then \
+               sudo apt-get update; \
+               sudo apt-get install -y nodejs php-cgi; \
+             fi; \
              sudo chown -R www-data:www-data /var/www/haleycse135.site/cgi-bin || true; \
              sudo chmod -R 755 /var/www/haleycse135.site/cgi-bin; \
              # Also place CGI scripts into the Apache ScriptAlias if present \
@@ -40,7 +45,7 @@ jobs:
                sudo chmod -R 755 /usr/lib/cgi-bin; \
                # Relax auth on cgi-bin if a global BasicAuth is configured \
                if [ -d /etc/apache2/conf-available ]; then \
-                 echo "<Directory /usr/lib/cgi-bin>\n    Options +ExecCGI\n    AddHandler cgi-script .cgi .pl\n    Require all granted\n</Directory>" | sudo tee /etc/apache2/conf-available/haley-cgi.conf >/dev/null; \
+                 echo "<Directory /usr/lib/cgi-bin>\n    Options +ExecCGI\n    AddHandler cgi-script .cgi .pl .js .php\n    Require all granted\n</Directory>" | sudo tee /etc/apache2/conf-available/haley-cgi.conf >/dev/null; \
                  sudo a2enconf haley-cgi || true; \
                  sudo a2enmod cgi || true; \
                  sudo systemctl reload apache2 || sudo service apache2 reload || true; \

@@ -1,4 +1,7 @@
 #!/usr/bin/perl
+use POSIX qw(tzset);
+$ENV{TZ} = "America/Los_Angeles";
+tzset();
 
 print "Cache-Control: no-cache\n";
 print "Content-type: text/html\n\n";

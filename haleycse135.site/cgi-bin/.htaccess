@@ -1,5 +1,5 @@
 Options +ExecCGI
-AddHandler cgi-script .pl .cgi
+AddHandler cgi-script .pl .cgi .js .php
 <IfModule mod_authz_core.c>
   Require all granted
 </IfModule>
