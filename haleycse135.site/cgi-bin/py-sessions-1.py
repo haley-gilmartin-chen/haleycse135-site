@@ -4,40 +4,30 @@ import sys
 import http.cookies
 from urllib.parse import parse_qs, unquote_plus
 
-# Print headers first
 print("Cache-Control: no-cache")
 
-# Get form data
 username = None
 if os.environ.get('REQUEST_METHOD') == 'POST':
-    # Read POST data
     content_length = int(os.environ.get('CONTENT_LENGTH', 0))
     post_data = sys.stdin.read(content_length)
     
-    # Parse form data
     form_data = parse_qs(post_data)
     if 'username' in form_data:
-        # Clean up the username value
         username = unquote_plus(form_data['username'][0].strip())
 
-# Create or get cookie
 cookie = http.cookies.SimpleCookie()
 
 if username:
-    # Set the cookie if username was submitted
     cookie['username'] = username
-    cookie['username']['path'] = '/'  # Make cookie available for all paths
+    cookie['username']['path'] = '/'
     print(cookie.output())
 elif 'HTTP_COOKIE' in os.environ:
-    # Try to load existing cookie
     cookie.load(os.environ['HTTP_COOKIE'])
     if 'username' in cookie:
         username = cookie['username'].value
 
-# Print content type header
 print("Content-type: text/html\n")
 
-# Print HTML
 print("""<!DOCTYPE html>
 <html>
 <head>

@@ -2,20 +2,16 @@
 import http.cookies
 from datetime import datetime, timedelta
 
-# Print headers first
 print("Cache-Control: no-cache")
 
-# Create cookie with expired date to delete it
 cookie = http.cookies.SimpleCookie()
 cookie['username'] = ''
 cookie['username']['expires'] = (datetime.now() - timedelta(days=1)).strftime('%a, %d %b %Y %H:%M:%S GMT')
-cookie['username']['path'] = '/'  # Important: match the path used when setting
+cookie['username']['path'] = '/'
 print(cookie.output())
 
-# Print content type header
 print("Content-type: text/html\n")
 
-# Print HTML
 print("""<!DOCTYPE html>
 <html>
 <head>

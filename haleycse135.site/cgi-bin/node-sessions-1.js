@@ -7,7 +7,6 @@ process.stdout.write("Cache-Control: no-cache\n");
 let username = null;
 let cookies = {};
 
-// Parse cookies
 if (process.env.HTTP_COOKIE) {
     cookies = process.env.HTTP_COOKIE.split(';').reduce((acc, cookie) => {
         const [key, value] = cookie.trim().split('=');
@@ -16,7 +15,6 @@ if (process.env.HTTP_COOKIE) {
     }, {});
 }
 
-// Handle POST data
 if (process.env.REQUEST_METHOD === 'POST') {
     let body = '';
     process.stdin.on('data', chunk => {

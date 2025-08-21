@@ -5,7 +5,6 @@ process.stdout.write("Content-type: text/html\n\n");
 
 let cookies = {};
 
-// Parse cookies
 if (process.env.HTTP_COOKIE) {
     cookies = process.env.HTTP_COOKIE.split(';').reduce((acc, cookie) => {
         const [key, value] = cookie.trim().split('=');

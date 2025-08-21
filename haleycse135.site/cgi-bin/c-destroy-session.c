@@ -3,12 +3,10 @@
 
 int main(int argc, char **argv, char **envp)
 {
-    // Headers
     printf("Cache-Control: no-cache\n");
     printf("Set-Cookie: username=; expires=Thu, 01 Jan 1970 00:00:00 GMT\n");
     printf("Content-type: text/html\n\n");
 
-    // Body - HTML
     printf("<html>");
     printf("<head><title>C Session Destroyed</title></head>");
     printf("<body>");

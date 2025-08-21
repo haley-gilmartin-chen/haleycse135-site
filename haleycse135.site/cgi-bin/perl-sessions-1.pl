@@ -15,11 +15,13 @@ print "<title>Perl Sessions</title>";
 print "</head>";
 print "<body>";
 print "<h1>Perl Sessions Page 1</h1>";
+
 if ($name){
-	print("<p><b>Name:</b> $name");
+    print("<p><b>Name:</b> $name");
 }else{
-	print "<p><b>Name:</b> You do not have a name set</p>";
+    print "<p><b>Name:</b> You do not have a name set</p>";
 }
+
 print "<br/><br/>";
 print "<a href=\"/cgi-bin/perl-sessions-2.pl\">Session Page 2</a><br/>";
 print "<a href=\"/perl-cgiform.html\">Perl CGI Form</a><br />";

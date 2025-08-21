@@ -2,10 +2,8 @@
 import os
 import http.cookies
 
-# Print headers first
 print("Cache-Control: no-cache")
 
-# Get username from cookie if it exists
 username = None
 if 'HTTP_COOKIE' in os.environ:
     cookie = http.cookies.SimpleCookie()
@@ -13,10 +11,8 @@ if 'HTTP_COOKIE' in os.environ:
     if 'username' in cookie:
         username = cookie['username'].value
 
-# Print content type header
 print("Content-type: text/html\n")
 
-# Print HTML
 print("""<!DOCTYPE html>
 <html>
 <head>
