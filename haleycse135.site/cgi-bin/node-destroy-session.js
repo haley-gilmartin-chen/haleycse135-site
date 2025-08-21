@@ -24,6 +24,7 @@ app.get('/', (req, res) => {
     res.write('<a href="/nodejs-cgiform.html">Back to the Node.js CGI Form</a><br />');
     res.write('<a href="/cgi-bin/node-sessions-1.js">Back to Page 1</a><br />');
     res.write('<a href="/cgi-bin/node-sessions-2.js">Back to Page 2</a>');
+    res.write('<a href="/">Back to home</a>');
     res.write('</body></html>');
     res.end();
 });

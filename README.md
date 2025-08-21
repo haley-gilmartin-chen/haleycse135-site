@@ -1,6 +1,10 @@
 Team members: Haley Chen
 Grader passcode: CSE135password 
 Link: https://haleycse135.site/
+Droplet: 143.110.230.131
+
+HW1:
+
 
 Automatic deploy setup: 
 - Created a user on droplet called "deploy" and gave ssh key to github in Action Secrets

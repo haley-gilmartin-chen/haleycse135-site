@@ -9,8 +9,10 @@ process.stdout.write(`
     <head><title>NodeJS Session Destroyed</title></head>
     <body>
     <h1>NodeJS Session Destroyed</h1>
-    <a href="/cgi-bin/node-state-demo.js">Back to Session Page</a><br />
-    <a href="/node-cgiform.html">Back to Form</a>
+    <a href="/cgi-bin/node-sessions-1.js">Back to Page 1</a><br />
+    <a href="/cgi-bin/node-sessions-2.js">Back to Page 2</a><br />
+    <a href="/nodejs-cgiform.html">Back to Form</a>
+    <a href="/">Back to home</a>
     </body>
     </html>
 `);
