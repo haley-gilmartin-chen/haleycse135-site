@@ -33,6 +33,12 @@ jobs:
             'set -euo pipefail; \
              sudo chown -R www-data:www-data /var/www/haleycse135.site/cgi-bin || true; \
              sudo chmod -R 755 /var/www/haleycse135.site/cgi-bin; \
+             # Also place CGI scripts into the Apache ScriptAlias if present \
+             if [ -d /usr/lib/cgi-bin ]; then \
+               sudo rsync -az --delete /var/www/haleycse135.site/cgi-bin/ /usr/lib/cgi-bin/; \
+               sudo chown -R www-data:www-data /usr/lib/cgi-bin; \
+               sudo chmod -R 755 /usr/lib/cgi-bin; \
+             fi; \
              mkdir -p /var/www/haleycse135.site/src-build; \
              cd /var/www/haleycse135.site/src-build; \
              rm -f c-hello-html-world.cgi c-hello-json-world.cgi c-env.cgi c-get-echo.cgi c-post-echo.cgi c-general-request-echo.cgi c-sessions-1.cgi c-sessions-2.cgi c-destroy-session.cgi; \
@@ -43,6 +49,9 @@ jobs:
              gcc -O2 -o c-post-echo.cgi ../public_html/src/c-post-echo.c; \
              gcc -O2 -o c-general-request-echo.cgi ../public_html/src/c-general-request-echo.c; \
              mv -f *.cgi /var/www/haleycse135.site/cgi-bin/; \
+             if [ -d /usr/lib/cgi-bin ]; then \
+               sudo rsync -az --delete /var/www/haleycse135.site/cgi-bin/ /usr/lib/cgi-bin/; \
+             fi; \
              sudo chown -R www-data:www-data /var/www/haleycse135.site/cgi-bin; \
              sudo chmod -R 755 /var/www/haleycse135.site/cgi-bin; \
              perl -v >/dev/null 2>&1 || true'
