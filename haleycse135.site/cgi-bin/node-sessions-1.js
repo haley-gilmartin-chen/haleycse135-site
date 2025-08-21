@@ -7,6 +7,7 @@ const express = require('express');
 const app = express();
 
 app.use(session({
+    name: 'CGISESSID',
     secret: 'your-secret-key',
     resave: false,
     saveUninitialized: true,
@@ -32,8 +33,8 @@ app.post('/', (req, res) => {
     }
     
     res.write('<br/><br/>');
-    res.write('<a href="/cgi-bin/node-state-demo-2.js">Session Page 2</a><br/>');
-    res.write('<a href="/node-cgiform.html">Node.js CGI Form</a><br />');
+    res.write('<a href="/cgi-bin/node-sessions-2.js">Session Page 2</a><br/>');
+    res.write('<a href="/nodejs-cgiform.html">Node.js CGI Form</a><br />');
     res.write('<form style="margin-top:30px" action="/cgi-bin/node-destroy-session.js" method="get">');
     res.write('<button type="submit">Destroy Session</button>');
     res.write('</form>');
