@@ -1,27 +1,41 @@
 #!/usr/bin/env node
+const http = require('http');
+const session = require('express-session');
+const express = require('express');
 
-function header(name, value){ process.stdout.write(name+": "+value+"\n"); }
-header("Cache-Control","no-cache");
-header("Content-type","text/html");
+const app = express();
 
-let body = '';
-process.stdin.setEncoding('utf8');
-process.stdin.on('data', chunk => body += chunk);
-process.stdin.on('end', () => {
-  process.stdout.write("\n");
-  const params = {};
-  body.split('&').filter(Boolean).forEach(pair => {
-    const [k,v] = pair.split('=');
-    params[decodeURIComponent(k)] = decodeURIComponent((v||'').replace(/\+/g,' '));
-  });
-  const name = params.username || '';
-  // Echo cookie if present
-  const cookie = process.env.HTTP_COOKIE || '';
-  header("Set-Cookie", `NODE_NAME=${encodeURIComponent(name)}; Path=/; HttpOnly`);
-  process.stdout.write(`<!DOCTYPE html><html><head><title>Node Sessions</title></head><body>`);
-  process.stdout.write(`<h1>Node Sessions Page 2</h1>`);
-  process.stdout.write(`<p><b>Name:</b> ${name ? name : 'You do not have a name set'}</p>`);
-  process.stdout.write(`<p><b>Cookie:</b> ${cookie}</p>`);
-  process.stdout.write(`<a href="/cgi-bin/node-state-demo-1.js">Back to Page 1</a>`);
-  process.stdout.write(`</body></html>`);
+app.use(session({
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }
+}));
+
+app.get('/', (req, res) => {
+    const name = req.session.username;
+
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.write('<html>');
+    res.write('<head><title>Node.js Sessions</title></head>');
+    res.write('<body>');
+    res.write('<h1>Node.js Sessions Page 2</h1>');
+    
+    if (name) {
+        res.write(`<p><b>Name:</b> ${name}</p>`);
+    } else {
+        res.write('<p><b>Name:</b> You do not have a name set</p>');
+    }
+    
+    res.write('<br/><br/>');
+    res.write('<a href="/cgi-bin/node-state-demo-1.js">Session Page 1</a><br/>');
+    res.write('<a href="/node-cgiform.html">Node.js CGI Form</a><br />');
+    res.write('<form style="margin-top:30px" action="/cgi-bin/node-destroy-session.js" method="get">');
+    res.write('<button type="submit">Destroy Session</button>');
+    res.write('</form>');
+    res.write('</body></html>');
+    res.end();
 });
+
+const server = http.createServer(app);
+server.listen(0);
